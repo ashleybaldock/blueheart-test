@@ -1,0 +1,17 @@
+overwrite: true
+schema: "./schema.graphql"
+documents:
+  - './src/adminQueries.ts'
+  - './src/queries.ts'
+generates:
+  src/generated/graphql.ts:
+    plugins:
+      - "typescript"
+      - "typescript-operations"
+      - "typescript-resolvers"
+    config:
+      namingConvention: keep
+      avoidOptionals: false
+  src/generated/graphql.schema.json:
+    plugins:
+      - "introspection"

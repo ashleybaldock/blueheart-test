@@ -1,0 +1,35 @@
+{
+  "name": "@blueheart/fsi-base",
+  "version": "1.0.0",
+  "workspaces": [
+    "packages/fsi-api-spec",
+    "packages/fsi-client",
+    "packages/fsi-server"
+  ],
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^2.10.0",
+    "@typescript-eslint/parser": "^2.10.0",
+    "eslint": "^6.8.0",
+    "eslint-config-airbnb": "^18.1.0",
+    "eslint-config-prettier": "^6.10.0",
+    "eslint-config-react-app": "^5.2.1",
+    "eslint-plugin-flowtype": "^4.6.0",
+    "eslint-plugin-import": "^2.20.1",
+    "eslint-plugin-jsx-a11y": "^6.2.3",
+    "eslint-plugin-prettier": "3.1.4",
+    "eslint-plugin-react": "^7.19.0",
+    "eslint-plugin-react-hooks": "^2.5.0",
+    "eslint-utils": "^2.0.0",
+    "lerna": "^3.22.1",
+    "prettier": "^2.0.5",
+    "react": "^16.13.1",
+    "typescript": "3.9.5"
+  },
+  "scripts": {
+    "eslint-fix": "eslint --fix \"./**/*.{ts,tsx,js,jsx}\"",
+    "postinstall": "lerna run postinstall-pkg",
+    "prettier-fix": "prettier --write ./**/*.{ts,tsx,js,json,css,graphql}",
+    "test": "lerna run test"
+  },
+  "private": true
+}

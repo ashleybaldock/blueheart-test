@@ -1,0 +1,20 @@
+type GQLPost {
+  id: String!
+  title: String!
+  content: String!
+}
+
+input GQLPostInput {
+  title: String!
+  content: String!
+}
+
+type Query {
+  # User API
+  getPosts: [GQLPost!]!
+}
+
+type Mutation {
+  # User API
+  createPost(post: GQLPostInput!): GQLPost
+}

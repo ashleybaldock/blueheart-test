@@ -1,0 +1,24 @@
+{
+  "name": "@blueheart/fsi-server",
+  "version": "1.0.0",
+  "main": "src/index.ts",
+  "license": "MIT",
+  "dependencies": {
+    "@types/lowdb": "^1.0.9",
+    "@types/shortid": "^0.0.29",
+    "apollo-server-koa": "^2.10.1",
+    "graphql": "^14.6.0",
+    "koa": "^2.11.0",
+    "koa-morgan": "^1.0.1",
+    "lowdb": "^1.0.0",
+    "nodemon": "^2.0.2",
+    "shortid": "^2.2.15",
+    "ts-node": "^8.4.1",
+    "typescript": "3.9.5",
+    "uuid": "^7.0.2"
+  },
+  "scripts": {
+    "postinstall": "cd ../.. && yarn postinstall",
+    "start": "nodemon -e js,ts,jsx,tsx,json,graphql --watch 'src/**/*.ts' --watch '../api-spec/**/*' --exec 'ts-node' src/index.ts"
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "name": "@blueheart/fsi-api-spec",
+  "version": "0.0.1",
+  "private": true,
+  "author": "Blueheart",
+  "main": "src/graphqlSchema.ts",
+  "scripts": {
+    "tscheck": "tsc --noEmit -p tsconfig.json",
+    "tsc": "tsc -p tsconfig.json",
+    "clean": "rm -rf lib",
+    "graphql-codegen": "graphql-codegen",
+    "gen": "graphql-codegen --config codegen.yml && tsc -p tsconfig.json",
+    "postinstall-pkg": "yarn gen",
+    "postinstall": "cd ../.. && yarn postinstall"
+  },
+  "dependencies": {
+    "apollo-hooks-codegen": "^1.2.0",
+    "graphql-tag": "^2.10.1"
+  },
+  "devDependencies": {
+    "@graphql-codegen/cli": "1.11.2",
+    "@graphql-codegen/fragment-matcher": "1.11.2",
+    "@graphql-codegen/introspection": "1.11.2",
+    "@graphql-codegen/typescript": "1.11.2",
+    "@graphql-codegen/typescript-document-nodes": "1.11.2",
+    "@graphql-codegen/typescript-graphql-files-modules": "1.11.2",
+    "@graphql-codegen/typescript-operations": "1.11.2",
+    "@graphql-codegen/typescript-react-apollo": "1.11.2",
+    "@graphql-codegen/typescript-resolvers": "1.11.2",
+    "graphql": "^14.6.0"
+  }
+}
