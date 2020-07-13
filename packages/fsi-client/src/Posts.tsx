@@ -41,6 +41,7 @@ export const NewPosts = () => {
     onError: () => {
       // Error is handled via UI feedback
     },
+    // This is beautiful magic
     refetchQueries: [
       {
         query: QUERY_GET_POSTS,
