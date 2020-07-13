@@ -41,6 +41,11 @@ export const NewPosts = () => {
     onError: () => {
       // Error is handled via UI feedback
     },
+    refetchQueries: [
+      {
+        query: QUERY_GET_POSTS,
+      },
+    ],
   });
 
   return (
@@ -61,8 +66,12 @@ export const NewPosts = () => {
             createPost({
               variables: {
                 post: {
-                  title: (target.elements.namedItem('formPostTitle') as HTMLInputElement).value,
-                  content: (target.elements.namedItem('formPostBody') as HTMLInputElement).value,
+                  title: (target.elements.namedItem(
+                    "formPostTitle"
+                  ) as HTMLInputElement).value,
+                  content: (target.elements.namedItem(
+                    "formPostBody"
+                  ) as HTMLInputElement).value,
                 },
               },
             });
@@ -96,11 +105,7 @@ export const NewPosts = () => {
             >
               Cancel
             </Button>
-            <Button
-              variant="primary"
-              disabled={loading}
-              type="submit"
-            >
+            <Button variant="primary" disabled={loading} type="submit">
               {loading ? "Saving…" : "Save Post"}
             </Button>
           </Modal.Footer>
