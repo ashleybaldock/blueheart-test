@@ -8,3 +8,9 @@
   margin-bottom: 1em;
   align-self: flex-end;
 }
+
+.serverError {
+  text-size: smaller;
+  color: red;
+  text-align: right;
+}

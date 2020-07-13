@@ -1,5 +1,8 @@
-import { useQuery } from "@apollo/react-hooks";
-import { QUERY_GET_POSTS } from "@blueheart/fsi-api-spec/lib/queries";
+import { useMutation, useQuery } from "@apollo/react-hooks";
+import {
+  MUTATION_SUBMIT_POST,
+  QUERY_GET_POSTS,
+} from "@blueheart/fsi-api-spec/lib/queries";
 import Table from "react-bootstrap/Table";
 import Button from "react-bootstrap/Button";
 import Container from "react-bootstrap/Container";
@@ -7,10 +10,12 @@ import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
 import Spinner from "react-bootstrap/Spinner";
 import {
+  CreatePostMutation,
+  CreatePostMutationVariables,
   GetPostsQuery,
   GetPostsQueryVariables,
 } from "@blueheart/fsi-api-spec/lib/generated/graphql";
-import * as React from "react";
+import React from "react";
 import styles from "./Posts.module.css";
 
 export const Posts = () => {
@@ -26,6 +31,18 @@ export const Posts = () => {
 export const NewPosts = () => {
   const [show, setShow] = React.useState(true);
 
+  const [createPost, { data, loading, error }] = useMutation<
+    CreatePostMutation,
+    CreatePostMutationVariables
+  >(MUTATION_SUBMIT_POST, {
+    onCompleted: () => {
+      setShow(false);
+    },
+    onError: () => {
+      // Error is handled via UI feedback
+    },
+  });
+
   return (
     <>
       <Button
@@ -37,31 +54,54 @@ export const NewPosts = () => {
         Add
       </Button>
       <Modal show={show} onHide={() => setShow(false)} centered>
-        <Form>
+        <Form
+          onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
+            e.preventDefault();
+            const target = e.target as HTMLFormElement;
+            createPost({
+              variables: {
+                post: {
+                  title: (target.elements.namedItem('formPostTitle') as HTMLInputElement).value,
+                  content: (target.elements.namedItem('formPostBody') as HTMLInputElement).value,
+                },
+              },
+            });
+          }}
+        >
           <Modal.Header closeButton>
             <Modal.Title>Add a Post</Modal.Title>
           </Modal.Header>
           <Modal.Body>
             <Form.Group controlId="formPostTitle">
               <Form.Label>Post Title</Form.Label>
-              <Form.Control type="email" />
+              <Form.Control type="text" />
             </Form.Group>
 
             <Form.Group controlId="formPostBody">
               <Form.Label>Post Content</Form.Label>
               <Form.Control as="textarea" rows={6} />
             </Form.Group>
+            {error && (
+              <div className={styles.serverError}>
+                {`Something went wrong, please try again.`}
+                {error.message}
+              </div>
+            )}
           </Modal.Body>
           <Modal.Footer>
-            <Button variant="secondary" onClick={() => setShow(false)}>
+            <Button
+              disabled={loading}
+              variant="secondary"
+              onClick={() => setShow(false)}
+            >
               Cancel
             </Button>
             <Button
               variant="primary"
+              disabled={loading}
               type="submit"
-              onClick={() => setShow(false)}
             >
-              Save Post
+              {loading ? "Saving…" : "Save Post"}
             </Button>
           </Modal.Footer>
         </Form>
