@@ -9,6 +9,7 @@
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^2.10.0",
     "@typescript-eslint/parser": "^2.10.0",
+    "babel-eslint": "^10.1.0",
     "eslint": "^6.8.0",
     "eslint-config-airbnb": "^18.1.0",
     "eslint-config-prettier": "^6.10.0",
@@ -27,7 +28,7 @@
   },
   "scripts": {
     "eslint-fix": "eslint --fix \"./**/*.{ts,tsx,js,jsx}\"",
-    "postinstall": "lerna run postinstall-pkg",
+    "postinstall": "lerna run bootstrap",
     "prettier-fix": "prettier --write ./**/*.{ts,tsx,js,json,css,graphql}",
     "test": "lerna run test"
   },
