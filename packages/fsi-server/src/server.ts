@@ -20,11 +20,8 @@ export const createApp = (app: Koa, ServerDependencies) => {
 export const createApollo = (serverDependencies: ServerDependencies) => {
   const resolvers: Resolvers<ServerDependencies> = {
     Query: {
-      getPosts: (_, __, ctx) => {
-        return {
-          posts: ctx.dbApi.getPosts(),
-          count: 5,
-        };
+      getPosts: (_, { skip = 0, take = -1 }, ctx) => {
+        return ctx.dbApi.getPosts({ skip, take });
       },
     },
     Mutation: {

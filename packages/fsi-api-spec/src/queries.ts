@@ -20,10 +20,10 @@ export const FRAGMENT_POSTS = gql`
 
 export const QUERY_GET_POSTS = gql`
   ${FRAGMENT_POSTS}
-  query GetPosts($offset: Int, $limit: Int) {
+  query GetPosts($skip: Int, $take: Int) {
     getPosts(
-      offset: $offset,
-      limit: $limit
+      skip: $skip,
+      take: $take
     ) {
       ...GQLPosts
     }

@@ -46,6 +46,10 @@ export const NewPosts = () => {
     refetchQueries: [
       {
         query: QUERY_GET_POSTS,
+        variables: {
+          skip: 0,
+          take: 5,
+        },
       },
     ],
   });
@@ -118,17 +122,24 @@ export const NewPosts = () => {
 };
 
 export const PostsTable = () => {
+  const take = 5;
+
   const { data, fetchMore, loading, error } = useQuery<
     GetPostsQuery,
     GetPostsQueryVariables
   >(QUERY_GET_POSTS, {
     variables: {
-      offset: 0,
-      limit: 5,
-    }
+      skip: 0,
+      take,
+    },
   });
 
-  const active = 1;
+  const active = 0;
+
+  const pageCount = React.useMemo(
+    () => Math.ceil((data?.getPosts?.count ?? 0) / take),
+    [data]
+  );
 
   return (
     <div className={styles.posts}>
@@ -139,12 +150,11 @@ export const PostsTable = () => {
       ) : (
         <>
           <Pagination size="sm">
-            <Pagination.Item key={1} active={1 === active}>
-              {1}
-            </Pagination.Item>
-            <Pagination.Item key={2} active={false}>
-              {2}
-            </Pagination.Item>
+            {[...Array(pageCount)].map((x, i) => (
+              <Pagination.Item key={i} active={i === active}>
+                {i + 1}
+              </Pagination.Item>
+            ))}
           </Pagination>
           <Table>
             <thead>

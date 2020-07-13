@@ -6,6 +6,7 @@ import * as low from "lowdb";
 import * as FileSync from "lowdb/adapters/FileSync";
 import {
   GQLPost,
+  GQLPosts,
   GQLPostInput,
 } from "@blueheart/fsi-api-spec/lib/generated/graphql";
 import { LowdbSync } from "lowdb";
@@ -25,7 +26,22 @@ db.defaults({
 }).write();
 
 export const dbApi = {
-  getPosts: (): GQLPost[] => db.get("posts").value(),
+  getPosts: ({ skip = 0, take = -1 }): GQLPosts => {
+    const posts = db.get("posts").value();
+
+    if (take === -1) {
+      return {
+        posts,
+        count: posts.length,
+      };
+    }
+
+    const slicedPosts = posts.slice(skip, skip + take);
+    return {
+      posts: slicedPosts,
+      count: posts.length,
+    }
+  },
   createPost: (postInput: GQLPostInput): GQLPost => {
     const post: GQLPost = {
       ...postInput,

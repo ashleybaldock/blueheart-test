@@ -16,7 +16,7 @@ input GQLPostInput {
 
 type Query {
   # User API
-  getPosts(offset: Int, limit: Int): GQLPosts!
+  getPosts(skip: Int, take: Int): GQLPosts!
 }
 
 type Mutation {
