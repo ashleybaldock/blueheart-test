@@ -9,6 +9,7 @@ import {
   GetPostsQueryVariables,
 } from "@blueheart/fsi-api-spec/lib/generated/graphql";
 import * as React from "react";
+import styles from './Posts.module.css';
 
 export const Posts = () => {
   return (
@@ -23,6 +24,7 @@ export const Posts = () => {
 export const NewPosts = () => {
   return (
     <Button
+    className={styles.newPosts}
       onClick={() => {
         console.log("Wire this up!");
       }}
@@ -38,34 +40,32 @@ export const PostsTable = () => {
     GetPostsQueryVariables
   >(QUERY_GET_POSTS);
 
-  if (loading) {
-    return <Spinner animation={"border"} />;
-  }
-
-  if (error || !data) {
-    return <div>{error ? error.toString() : "Error: no data"}</div>;
-  }
-
   return (
-    <div>
-      <Table>
-        <thead>
-          <tr>
-            <th>Id</th>
-            <th>Title</th>
-            <th>Content</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.getPosts.map((post) => (
-            <tr key={post.id}>
-              <td>{post.id}</td>
-              <td>{post.title}</td>
-              <td>{post.content}</td>
+    <div className={styles.posts}>
+      {loading ? (
+        <Spinner animation={"border"} />
+      ) : error || !data ? (
+        <div>{error ? error?.toString() : "Error: no data"}</div>
+      ) : (
+        <Table>
+          <thead>
+            <tr>
+              <th>Id</th>
+              <th>Title</th>
+              <th>Content</th>
             </tr>
-          ))}
-        </tbody>
-      </Table>
+          </thead>
+          <tbody>
+            {data?.getPosts.map((post) => (
+              <tr key={post.id}>
+                <td>{post.id}</td>
+                <td>{post.title}</td>
+                <td>{post.content}</td>
+              </tr>
+            ))}
+          </tbody>
+        </Table>
+      )}
     </div>
   );
 };
