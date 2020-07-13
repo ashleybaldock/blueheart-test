@@ -36,7 +36,7 @@ export const dbApi = {
       };
     }
 
-    const slicedPosts = posts.slice(skip, skip + take);
+    const slicedPosts = posts.slice(skip * take, skip * take + take);
     return {
       posts: slicedPosts,
       count: posts.length,

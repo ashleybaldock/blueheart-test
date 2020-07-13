@@ -11,6 +11,7 @@ import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
 import Spinner from "react-bootstrap/Spinner";
 import {
+  GQLPost,
   CreatePostMutation,
   CreatePostMutationVariables,
   GetPostsQuery,
@@ -20,16 +21,55 @@ import React from "react";
 import styles from "./Posts.module.css";
 
 export const Posts = () => {
+  const [currentPage, setCurrentPage] = React.useState(0);
+  const take = 5;
+
+  /*
+   * I changed this to use refetch (and pass it as a prop to newpage)
+   * as I couldn't figure out a neat way to use refetchQueries to re-use
+   * the previous skip/take variables
+   */
+  const { data, refetch, fetchMore, loading, error } = useQuery<
+    GetPostsQuery,
+    GetPostsQueryVariables
+  >(QUERY_GET_POSTS, {
+    variables: {
+      skip: currentPage,
+      take,
+    },
+  });
+
+  const pageCount = Math.ceil((data?.getPosts?.count ?? 0) / take);
+
   return (
     <Container>
       <h1>Posts</h1>
-      <NewPosts />
-      <PostsTable />
+      <NewPosts onCompleted={refetch} />
+      <div className={styles.posts}>
+        {loading ? (
+          <Spinner animation={"border"} />
+        ) : error || !data ? (
+          <div>{error?.toString() ?? "Error: no data"}</div>
+        ) : (
+          <>
+            <PostsTablePagination
+              pageCount={pageCount}
+              currentPage={currentPage}
+              setCurrentPage={setCurrentPage}
+            />
+            <PostsTable posts={data?.getPosts?.posts ?? []} />
+          </>
+        )}
+      </div>
     </Container>
   );
 };
 
-export const NewPosts = () => {
+type NewPostsProps = {
+  onCompleted: () => void;
+};
+
+export const NewPosts = ({ onCompleted }: NewPostsProps) => {
   const [show, setShow] = React.useState(false);
 
   const [createPost, { data, loading, error }] = useMutation<
@@ -38,20 +78,11 @@ export const NewPosts = () => {
   >(MUTATION_SUBMIT_POST, {
     onCompleted: () => {
       setShow(false);
+      onCompleted();
     },
     onError: () => {
       // Error is handled via UI feedback
     },
-    // This is beautiful magic
-    refetchQueries: [
-      {
-        query: QUERY_GET_POSTS,
-        variables: {
-          skip: 0,
-          take: 5,
-        },
-      },
-    ],
   });
 
   return (
@@ -121,61 +152,51 @@ export const NewPosts = () => {
   );
 };
 
-export const PostsTable = () => {
-  const take = 5;
+type PostsTablePaginationProps = {
+  pageCount: number;
+  currentPage: number;
+  setCurrentPage: (pageIndex: number) => void;
+};
 
-  const { data, fetchMore, loading, error } = useQuery<
-    GetPostsQuery,
-    GetPostsQueryVariables
-  >(QUERY_GET_POSTS, {
-    variables: {
-      skip: 0,
-      take,
-    },
-  });
-
-  const active = 0;
-
-  const pageCount = React.useMemo(
-    () => Math.ceil((data?.getPosts?.count ?? 0) / take),
-    [data]
-  );
-
+export const PostsTablePagination = ({
+  pageCount,
+  currentPage,
+  setCurrentPage,
+}: PostsTablePaginationProps) => {
   return (
-    <div className={styles.posts}>
-      {loading ? (
-        <Spinner animation={"border"} />
-      ) : error || !data ? (
-        <div>{error?.toString() ?? "Error: no data"}</div>
-      ) : (
-        <>
-          <Pagination size="sm">
-            {[...Array(pageCount)].map((x, i) => (
-              <Pagination.Item key={i} active={i === active}>
-                {i + 1}
-              </Pagination.Item>
-            ))}
-          </Pagination>
-          <Table>
-            <thead>
-              <tr>
-                <th>Id</th>
-                <th>Title</th>
-                <th>Content</th>
-              </tr>
-            </thead>
-            <tbody>
-              {data?.getPosts.posts.map((post) => (
-                <tr key={post.id}>
-                  <td>{post.id}</td>
-                  <td>{post.title}</td>
-                  <td>{post.content}</td>
-                </tr>
-              ))}
-            </tbody>
-          </Table>
-        </>
-      )}
-    </div>
+    <Pagination size="sm">
+      {[...Array(pageCount)].map((x, i) => (
+        <Pagination.Item key={i} active={i === currentPage} onClick={() => setCurrentPage(i)}>
+          {i + 1}
+        </Pagination.Item>
+      ))}
+    </Pagination>
+  );
+};
+
+type PostsTableProps = {
+  posts: Array<GQLPost>;
+};
+
+export const PostsTable = ({ posts }: PostsTableProps) => {
+  return (
+    <Table>
+      <thead>
+        <tr>
+          <th>Id</th>
+          <th>Title</th>
+          <th>Content</th>
+        </tr>
+      </thead>
+      <tbody>
+        {posts.map((post) => (
+          <tr key={post.id}>
+            <td>{post.id}</td>
+            <td>{post.title}</td>
+            <td>{post.content}</td>
+          </tr>
+        ))}
+      </tbody>
+    </Table>
   );
 };
