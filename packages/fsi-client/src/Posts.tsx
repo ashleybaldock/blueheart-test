@@ -3,13 +3,15 @@ import { QUERY_GET_POSTS } from "@blueheart/fsi-api-spec/lib/queries";
 import Table from "react-bootstrap/Table";
 import Button from "react-bootstrap/Button";
 import Container from "react-bootstrap/Container";
+import Modal from "react-bootstrap/Modal";
+import Form from "react-bootstrap/Form";
 import Spinner from "react-bootstrap/Spinner";
 import {
   GetPostsQuery,
   GetPostsQueryVariables,
 } from "@blueheart/fsi-api-spec/lib/generated/graphql";
 import * as React from "react";
-import styles from './Posts.module.css';
+import styles from "./Posts.module.css";
 
 export const Posts = () => {
   return (
@@ -22,15 +24,49 @@ export const Posts = () => {
 };
 
 export const NewPosts = () => {
+  const [show, setShow] = React.useState(true);
+
   return (
-    <Button
-    className={styles.newPosts}
-      onClick={() => {
-        console.log("Wire this up!");
-      }}
-    >
-      Add
-    </Button>
+    <>
+      <Button
+        className={styles.newPosts}
+        onClick={() => {
+          setShow(true);
+        }}
+      >
+        Add
+      </Button>
+      <Modal show={show} onHide={() => setShow(false)} centered>
+        <Form>
+          <Modal.Header closeButton>
+            <Modal.Title>Add a Post</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <Form.Group controlId="formPostTitle">
+              <Form.Label>Post Title</Form.Label>
+              <Form.Control type="email" />
+            </Form.Group>
+
+            <Form.Group controlId="formPostBody">
+              <Form.Label>Post Content</Form.Label>
+              <Form.Control as="textarea" rows={6} />
+            </Form.Group>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={() => setShow(false)}>
+              Cancel
+            </Button>
+            <Button
+              variant="primary"
+              type="submit"
+              onClick={() => setShow(false)}
+            >
+              Save Post
+            </Button>
+          </Modal.Footer>
+        </Form>
+      </Modal>
+    </>
   );
 };
 
@@ -45,7 +81,7 @@ export const PostsTable = () => {
       {loading ? (
         <Spinner animation={"border"} />
       ) : error || !data ? (
-        <div>{error ? error?.toString() : "Error: no data"}</div>
+        <div>{error?.toString() ?? "Error: no data"}</div>
       ) : (
         <Table>
           <thead>
