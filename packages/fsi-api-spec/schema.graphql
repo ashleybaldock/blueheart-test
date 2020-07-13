@@ -4,6 +4,11 @@ type GQLPost {
   content: String!
 }
 
+type GQLPosts {
+  posts: [GQLPost!]!
+  count: Int!
+}
+
 input GQLPostInput {
   title: String!
   content: String!
@@ -11,7 +16,7 @@ input GQLPostInput {
 
 type Query {
   # User API
-  getPosts: [GQLPost!]!
+  getPosts(offset: Int, limit: Int): GQLPosts!
 }
 
 type Mutation {

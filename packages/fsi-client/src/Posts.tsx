@@ -3,6 +3,7 @@ import {
   MUTATION_SUBMIT_POST,
   QUERY_GET_POSTS,
 } from "@blueheart/fsi-api-spec/lib/queries";
+import Pagination from "react-bootstrap/Pagination";
 import Table from "react-bootstrap/Table";
 import Button from "react-bootstrap/Button";
 import Container from "react-bootstrap/Container";
@@ -29,7 +30,7 @@ export const Posts = () => {
 };
 
 export const NewPosts = () => {
-  const [show, setShow] = React.useState(true);
+  const [show, setShow] = React.useState(false);
 
   const [createPost, { data, loading, error }] = useMutation<
     CreatePostMutation,
@@ -117,10 +118,17 @@ export const NewPosts = () => {
 };
 
 export const PostsTable = () => {
-  const { data, loading, error } = useQuery<
+  const { data, fetchMore, loading, error } = useQuery<
     GetPostsQuery,
     GetPostsQueryVariables
-  >(QUERY_GET_POSTS);
+  >(QUERY_GET_POSTS, {
+    variables: {
+      offset: 0,
+      limit: 5,
+    }
+  });
+
+  const active = 1;
 
   return (
     <div className={styles.posts}>
@@ -129,24 +137,34 @@ export const PostsTable = () => {
       ) : error || !data ? (
         <div>{error?.toString() ?? "Error: no data"}</div>
       ) : (
-        <Table>
-          <thead>
-            <tr>
-              <th>Id</th>
-              <th>Title</th>
-              <th>Content</th>
-            </tr>
-          </thead>
-          <tbody>
-            {data?.getPosts.map((post) => (
-              <tr key={post.id}>
-                <td>{post.id}</td>
-                <td>{post.title}</td>
-                <td>{post.content}</td>
+        <>
+          <Pagination size="sm">
+            <Pagination.Item key={1} active={1 === active}>
+              {1}
+            </Pagination.Item>
+            <Pagination.Item key={2} active={false}>
+              {2}
+            </Pagination.Item>
+          </Pagination>
+          <Table>
+            <thead>
+              <tr>
+                <th>Id</th>
+                <th>Title</th>
+                <th>Content</th>
               </tr>
-            ))}
-          </tbody>
-        </Table>
+            </thead>
+            <tbody>
+              {data?.getPosts.posts.map((post) => (
+                <tr key={post.id}>
+                  <td>{post.id}</td>
+                  <td>{post.title}</td>
+                  <td>{post.content}</td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+        </>
       )}
     </div>
   );

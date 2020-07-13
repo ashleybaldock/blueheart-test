@@ -21,7 +21,10 @@ export const createApollo = (serverDependencies: ServerDependencies) => {
   const resolvers: Resolvers<ServerDependencies> = {
     Query: {
       getPosts: (_, __, ctx) => {
-        return ctx.dbApi.getPosts();
+        return {
+          posts: ctx.dbApi.getPosts(),
+          count: 5,
+        };
       },
     },
     Mutation: {
