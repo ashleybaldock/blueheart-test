@@ -36,6 +36,7 @@ export const dbApi = {
       };
     }
 
+    // You did say it was fine to be inefficient :)
     const slicedPosts = posts.slice(skip * take, skip * take + take);
     return {
       posts: slicedPosts,
